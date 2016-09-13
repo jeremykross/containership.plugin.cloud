@@ -15,8 +15,6 @@ module.exports = new ContainershipPlugin({
     initialize: function(core) {
         let config = this.get_config('core');
 
-        console.log("Url: " + config.cloud_api_url)
-
         if(_.has(core, 'logger')) {
             core.logger.register('containership-cloud');
 
@@ -43,7 +41,7 @@ module.exports = new ContainershipPlugin({
                 commands: commands,
                 middleware: [
                     function(options, fn) {
-                        if(options.url.indexOf('https://api.containership.io') == 0) {
+                        if(options.url.indexOf(config.cloud_api_url) == 0) {
                             let original_url = options.url;
                             options.url = [
                                 config.cloud_api_url,
