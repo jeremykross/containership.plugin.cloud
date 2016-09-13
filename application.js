@@ -7,17 +7,18 @@ const leader = require(`${__dirname}/lib/leader`);
 
 const _ = require('lodash');
 const ContainershipPlugin = require('containership.plugin');
-const url = require('url');
 
 module.exports = new ContainershipPlugin({
     type: ['core', 'cli'],
     name: 'cloud',
 
     initialize: function(core) {
+        let config = this.get_config('core');
+
+        console.log("Url: " + config.cloud_api_url)
+
         if(_.has(core, 'logger')) {
             core.logger.register('containership-cloud');
-
-            let config = this.get_config('core');
 
             cluster_discovery.discover(function(err, cidr) {
                 if(!err) {
@@ -31,6 +32,7 @@ module.exports = new ContainershipPlugin({
                     follower.initialize(core, config);
                 }
             });
+
         } else {
             let commands = _.map(cli, function(configuration, command) {
                 configuration.name = command;
@@ -44,7 +46,7 @@ module.exports = new ContainershipPlugin({
                         if(options.url.indexOf('https://api.containership.io') == 0) {
                             let original_url = options.url;
                             options.url = [
-                                'https://api.containership.io',
+                                config.cloud_api_url,
                                 'v2',
                                 'organizations',
                                 options.headers['x-containership-cloud-organization'],
